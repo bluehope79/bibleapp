@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="Expire" content="-1">
+      <meta http-equiv='Cache-Control' content='no-cache'>
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta name="viewport" content="user-scalable=yes, initial-scale=1, maximum-scale=1, width=device-width">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="format-detection" content="telephone=no">
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+
+<a href="/message/?BOOKTYPE=A">모세의기도</a><br>
+<a href="/message/?BOOKTYPE=B">예수님의기도</a><br>
+<a href="/message/?BOOKTYPE=C">구약/신약의기도</a><br>
+<a href="/message/?BOOKTYPE=D">전도</a><br>
+
+
+    <% if (board !== null){
+        for(var i = 0; i < board.length; i++) { %>
+         
+          <% if (BOOKTYPE == board[i].BOOKTYPE){ %>
+ 
+            <a href="/messagedetail/<%= board[i]._id%>"><h3><%=board[i].DAY%>일차 [<%=board[i].BOOK%>] <%=board[i].BIBLE_SM%><%=board[i].VERSE%>- <%=board[i].SUBJECT%></h3></a>
+    
+          <%  } %>
+    <%  }} %>
+  </body>
+</html>

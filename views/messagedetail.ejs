@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta http-equiv="Expire" content="-1">
+      <meta http-equiv='Cache-Control' content='no-cache'>
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta name="viewport" content="user-scalable=yes, initial-scale=1, maximum-scale=1, width=device-width">
+      <meta name="mobile-web-app-capable" content="yes">
+      <meta name="apple-mobile-web-app-capable" content="yes">
+      <meta name="format-detection" content="telephone=no">
+    <title><%=board.BOOK%> - <%=board.SUBJECT%>내용 보기</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%=board.BOOK%></h1>
+    
+      <h3>제목 : <%=board.SUBJECT%></h3> 
+      <h3>성경 : <%=board.BIBLE_SM%> <%=board.VERSE%></h3> 
+      <% if (board.CONTENT !== null){%>
+         <pre style="white-space: pre-wrap"><%=board.CONTENT%></pre>
+      <%}%> 
+      <br>
+      <input type="button" value="뒤로" onclick="history.back();">
+  </body>
+</html>

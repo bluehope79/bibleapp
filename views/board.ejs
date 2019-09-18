@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%=board.BOOK%> - <%=board.SUBJECT%>내용 보기</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%=board.BOOK%></h1>
+    <form action="/board/edit" method="post">
+    
+      <h3>제목 : <%=board.SUBJECT%></h3> 
+      <h3>성경 : <%=board.BIBLE_SM%> <%=board.VERSE%></h3> 
+      <h3>내용 :</h3> <textarea name="modcontents" rows="33" cols="90"><%=board.CONTENT%></textarea> 
+      <input type="text" name="id" value="<%=board._id%>" hidden>
+      <input type="submit" value="확인">
+      <input type="button" value="목록" onclick="location.href='/';">
+    </form>
+  </body>
+</html>
