@@ -17,72 +17,61 @@ module.exports = function(app)
         server: '121.129.55.141',
     
         database: 'tsweb'
+        
 
 //    options: {
+
 //                encrypt: true // Use this if you're on Windows Azure 
+
 //            }
 
     };
 
+    
 
     sql.connect(config).then(pool => {
  
-        // 모상품 조회 
-        app.get('/api/v1/products', function(req, res, err){
+
+        // GET ALL USERS
+
+        app.get('/api/v1/alive', function(req, res){
             
-                return pool.request()
             
-                .input('ASHOP_SITE_CD', 'TOUR2000') 
-                .execute('WSP_PARTNERS_NAVER_PACK_GOODS;2') 
-                
-                .then(result => {
-                    res.json(res.json(result.recordset););
-
-                    res.end();
-
-                });
-
-        });
-
-         // 자상품 조회 
-        
-        app.get('/api/v1/products/:mstCode', function(req, res, err){
-            console.log(req.param.id); //url 파라미터 
-            const id = parseInt(req.params.id, 10);
-
             return pool.request()
-        
-            .input('ASHOP_SITE_CD', 'TOUR2000') 
-            .input('GOOD_TYPE_CD', '1') 
-            .input('AREA_CD', '50') 
-            .input('GOOD_YY', '2019') 
-            .input('GOOD_SEQ', '1') 
-            .execute('WSP_PARTNERS_NAVER_PACK_GOODS;3')  //행사리스트 
             
+           
+            .query('select top 10 * from ttm_member')
+                
             .then(result => {
+
                 res.json(result.recordset);
+
                 res.end();
 
             });
 
+            
+
         });
 
-        //단일 자상품 정보 조회
-        app.get('/api/v1/products/:childCode/info', function(req, res){
 
-                return pool.request()
-            
-                .input('ASHOP_SITE_CD', 'TOUR2000') 
-                .input('EV_YM', '191002') 
-                .input('EV_SEQ', '500') 
-                .execute('WSP_PARTNERS_NAVER_PACK_GOODS;6') 
-                
-                .then(result => {
-                    res.json(result.recordset);
+        // GET SINGLE USERS BY USER_ID
 
-                    res.end();
+        app.get('/api/v1/products/:mstCode', function(req, res){
 
-                });
+           return pool.request()
+
+            .input('input_parameter', sql.Int, req.params.user_id)
+
+            .query('select * from ttm_member where cust_id = @input_parameter')
+
+            .then(result => {
+
+                res.json(result.recordset);
+
+                res.end();
+
+            });
 
             
 
