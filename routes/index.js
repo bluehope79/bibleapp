@@ -1,183 +1,131 @@
-// routes/index.js
+var express = require('express');
+var router = express.Router();
+var url = require("url"); 
 
-module.exports = function(app)
+var Board = require('../models/board');
 
-{
+/* GET home page. */
+var mysort = {DAY: 1};
+router.get('/admin', function(req, res, next) {
+  Board.find({}, function (err, board) {
+      res.render('admin', { title: '영락큐티봇관리자', board: board });
+  }).sort(mysort);
+});
 
-    const sql = require('mssql');
+var mysort = {DAY: 1};
+router.get('/message', function(req, res, next) {
+  Board.find({}, function (err, board) {
+      
+        var urlParse = url.parse(req.url, true); 
+        var queryString = urlParse.query; 
 
+          res.render('message', { title: '영락큐티',BOOKTYPE : queryString.BOOKTYPE , board: board });
+  }).sort(mysort);
+});
+
+var mysort = {DAY: 1};
+router.get('/messageadmin', function(req, res, next) {
+  Board.find({}, function (err, board) {
+      
+        var urlParse = url.parse(req.url, true); 
+        var queryString = urlParse.query; 
+
+          res.render('messageadmin', { title: '영락큐티',BOOKTYPE : queryString.BOOKTYPE , board: board });
+  }).sort(mysort);
+});
+
+var mysort = {DAY: 1};
+router.get('/messageadmin', function(req, res, next) {
+  Board.find({}, function (err, board) {
+      
+        var urlParse = url.parse(req.url, true); 
+        var queryString = urlParse.query; 
+
+          res.render('messageadmin', { title: '영락큐티',BOOKTYPE : queryString.BOOKTYPE , board: board });
+  }).sort(mysort);
+});
+
+var mysort = {DAY: 1};
+router.get('/board', function(req, res, next) {
+  Board.find({}, function (err, board) {
+      
+        var urlParse = url.parse(req.url, true); 
+        var queryString = urlParse.query; 
+
+          res.render('board', { title: '영락큐티',BOOKTYPE : queryString.BOOKTYPE , board: board });
+  }).sort(mysort);
+});
+
+router.get('/', function(req, res, next) {
+    Board.find({}, function (err, board) {
+        res.render('index', { title: '영락큐티 메인', board: board });
+    }).sort(mysort);
+  });
+
+/* Write board page */
+router.get('/write', function(req, res, next) {
+    res.render('write', { title: '등록' });
+});
+
+/* board insert mongo */
+router.post('/board/write', function (req, res) {
+  var board = new Board();
+  board.SUBJECT = req.body.SUBJECT;
+  board.CONTENT = req.body.CONTENT;
+  board.BOOK = req.body.BOOK;
+
+  board.save(function (err) {
+    if(err){
+      console.log(err);
+      res.redirect('/');
+    }
+    res.redirect('/');
+  });
+});
+
+
+/* board edit mongo */
+router.post('/board/edit', function (req, res) {
+    var board = new Board();
+    board.CONTENT = req.body.modcontents;
     
-
-    var config = {
-
-        user: 'ttm_friver',
-    
-        password: 'frivertkdydwk',
-    
-        server: '121.129.55.141',
-    
-        database: 'tsweb'
-
-//    options: {
-//                encrypt: true // Use this if you're on Windows Azure 
-//            }
-
-    };
-
-
-    sql.connect(config).then(pool => {
- 
-        // 모상품 조회 
-        app.get('/api/v1/products', function(req, res, err){
-            
-                return pool.request()
-            
-                .input('ASHOP_SITE_CD', 'TOUR2000') 
-                .execute('WSP_PARTNERS_NAVER_PACK_GOODS;2') 
-                
-                .then(result => {
-                    res.json(res.json(result.recordset););
-
-                    res.end();
-
-                });
-
-        });
-
-         // 자상품 조회 
-        
-        app.get('/api/v1/products/:mstCode', function(req, res, err){
-            console.log(req.param.id); //url 파라미터 
-            const id = parseInt(req.params.id, 10);
-
-            return pool.request()
-        
-            .input('ASHOP_SITE_CD', 'TOUR2000') 
-            .input('GOOD_TYPE_CD', '1') 
-            .input('AREA_CD', '50') 
-            .input('GOOD_YY', '2019') 
-            .input('GOOD_SEQ', '1') 
-            .execute('WSP_PARTNERS_NAVER_PACK_GOODS;3')  //행사리스트 
-            
-            .then(result => {
-                res.json(result.recordset);
-                res.end();
-
-            });
-
-        });
-
-        //단일 자상품 정보 조회
-        app.get('/api/v1/products/:childCode/info', function(req, res){
-
-                return pool.request()
-            
-                .input('ASHOP_SITE_CD', 'TOUR2000') 
-                .input('EV_YM', '191002') 
-                .input('EV_SEQ', '500') 
-                .execute('WSP_PARTNERS_NAVER_PACK_GOODS;6') 
-                
-                .then(result => {
-                    res.json(result.recordset);
-
-                    res.end();
-
-                });
-
-            
-
-        });
-
-        
-
-        // GET SINGLE USERS ID BY NAME
-
-        app.get('/api/v1/products/:childCode/info', function(req, res){
-
-           return pool.request()
-
-            .input('input_parameter', req.params.name)
-
-            .query('select * from ttm_member where cust_nm_kor = @input_parameter')
-
-            .then(result => {
-
-                res.json(result.recordset);
-
-                res.end();
-
-            });
-
-            
-
-        });
-
-        
-
-        // CREATE USERS
-
-        app.post('/api/users', function(req, res){
-
-            return pool.request()
-
-            .input('input_parameter', req.body.name) // json body에서 name 항목을 찾아서 할당
-
-            .query('INSERT INTO ttm_member (Name) VALUES (@input_parameter)')
-
-            .then(result => {
-
-                res.json(result.recordset);
-
-                res.end();
-
-            });
-
-        });
-
-                
-
-        // UPDATE THE USERS
-
-        app.put('/api/users/:user_id', function(req, res){
-
-           return pool.request()
-
-            .input('input_parameter_user_id', sql.Int, req.params.user_id)
-
-            .input('input_parameter_name', req.body.name)
-
-            .query('UPDATE ttm_member SET cust_nm_kor = @input_parameter_name WHERE cust_id = @input_parameter_user_id')
-
-            .then(result => {
-
-                res.json(result.recordset);
-
-                res.end();
-
-            });
-
-        });
-
-        // DELETE USERS
-
-        app.delete('/api/users/:user_id', function(req, res){
-
-            return pool.request()
-
-            .input('input_parameter', sql.Int, req.params.user_id)
-
-            .query('DELETE FROM MemberInfo WHERE MemberID = @input_parameter')
-
-            .then(result => {
-
-                res.json(result.recordset);
-
-                res.end();
-
-            });
-
-        });
-
+    Board.findOneAndUpdate({_id : req.body.id}, {$set:{CONTENT:req.body.modcontents}} , function (err, board) {
+        if(err){
+            console.log(err);
+            res.redirect('/');
+        }
+        res.redirect('/board/'+req.body.id);
     });
 
-}
+});
+
+/* board find by id */
+router.get('/board/:id', function (req, res) {
+    Board.findOne({_id: req.params.id}, function (err, board) {
+        res.render('board', { title: '영락큐티', board: board });
+    })
+});
+
+router.get('/messagedetail/:id', function (req, res) {
+    Board.findOne({_id: req.params.id}, function (err, board) {
+        res.render('messagedetail', { title: '영락큐티내용보기', board: board });
+    })
+});
+
+
+/* comment insert mongo*/
+router.post('/comment/write', function (req, res){
+    var comment = new Comment();
+    comment.contents = req.body.contents;
+    comment.author = req.body.author;
+
+    Board.findOneAndUpdate({_id : req.body.id}, { $push: { comments : comment}}, function (err, board) {
+        if(err){
+            console.log(err);
+            res.redirect('/');
+        }
+        res.redirect('/board/'+req.body.id);
+    });
+});
+
+module.exports = router;
